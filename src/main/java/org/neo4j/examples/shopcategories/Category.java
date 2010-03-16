@@ -10,15 +10,15 @@ public interface Category
 
     void addSubcategory( Category category );
 
-    /**
-     * 
-     * @return all products of this category and any subcategories
-     */
+    Iterable<Product> getAllProducts();
+
     Iterable<Product> getProducts();
 
     void addProduct( Product product );
 
     Iterable<AttributeDefinition> getAttributeDefinitions();
+
+    Iterable<AttributeDefinition> getAllAttributeDefinitions();
 
     AttributeDefinition createAttributeDefinition( AttributeType type,
             String name );

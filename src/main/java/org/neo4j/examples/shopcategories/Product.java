@@ -1,8 +1,12 @@
 package org.neo4j.examples.shopcategories;
 
+import java.util.Map;
+
 public interface Product
 {
-    Iterable<AttributeValue> getAttributeValues();
+    Map<AttributeDefinition, Object> getAttributeValues();
+
+    void setAttribute( AttributeDefinition attributeDefinition, Object value );
 
     Category getCategory();
 }

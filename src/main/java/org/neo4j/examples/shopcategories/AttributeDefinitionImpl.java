@@ -41,4 +41,11 @@ public class AttributeDefinitionImpl extends
     {
         getUnderlyingContainer().setProperty( REQUIRED, required );
     }
+
+    @Override
+    public String toString()
+    {
+        return "attribute[" + getName() + "](" + ( !isRequired() ? "not " : "" )
+               + "required, " + getTypeName() + ")";
+    }
 }

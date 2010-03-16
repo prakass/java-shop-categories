@@ -1,11 +1,15 @@
 package org.neo4j.examples.shopcategories;
 
+import java.util.Iterator;
+
 import org.neo4j.commons.iterator.IterableWrapper;
+import org.neo4j.commons.iterator.NestingIterable;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ReturnableEvaluator;
 import org.neo4j.graphdb.StopEvaluator;
+import org.neo4j.graphdb.TraversalPosition;
 import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.Traverser.Order;
 
@@ -22,16 +26,23 @@ public class CategoryImpl extends ContainerWrapperWithName<Node> implements
         super( node, name );
     }
 
-    public void addProduct( Product product )
+    public void addProduct( final Product product )
     {
         Node productNode = ( (ProductImpl) product ).getUnderlyingContainer();
         getUnderlyingContainer().createRelationshipTo( productNode,
                 RelationshipTypes.PRODUCT );
     }
 
-    public void addSubcategory( Category category )
+    public void addSubcategory( final Category category )
     {
         Node categoryNode = ( (CategoryImpl) category ).getUnderlyingContainer();
+        if ( categoryNode.hasRelationship( RelationshipTypes.SUBCATEGORY,
+                Direction.INCOMING ) )
+        {
+            throw new IllegalArgumentException(
+                    "A category can only be added as a subcategory to one "
+                            + "parent category." );
+        }
         getUnderlyingContainer().createRelationshipTo( categoryNode,
                 RelationshipTypes.SUBCATEGORY );
     }
@@ -45,15 +56,32 @@ public class CategoryImpl extends ContainerWrapperWithName<Node> implements
         {
             @Override
             protected AttributeDefinition underlyingObjectToObject(
-                    Relationship relationship )
+                    final Relationship relationship )
             {
                 return new AttributeDefinitionImpl( relationship );
             }
         };
     }
 
-    public AttributeDefinition createAttributeDefinition( AttributeType type,
-            String name )
+    public Iterable<AttributeDefinition> getAllAttributeDefinitions()
+    {
+        Traverser allCategories = getUnderlyingContainer().traverse(
+                Order.DEPTH_FIRST, StopEvaluator.END_OF_GRAPH,
+                ReturnableEvaluator.ALL, RelationshipTypes.SUBCATEGORY,
+                Direction.INCOMING );
+        return new NestingIterable<AttributeDefinition, Node>( allCategories )
+        {
+            @Override
+            protected Iterator<AttributeDefinition> createNestedIterator(
+                    final Node categoryNode )
+            {
+                return ( new CategoryImpl( categoryNode ) ).getAttributeDefinitions().iterator();
+            }
+        };
+    }
+
+    public AttributeDefinition createAttributeDefinition(
+            final AttributeType type, final String name )
     {
         Node typeNode = ( (AttributeTypeImpl) type ).getUnderlyingContainer();
         Relationship attributeRel = getUnderlyingContainer().createRelationshipTo(
@@ -67,14 +95,39 @@ public class CategoryImpl extends ContainerWrapperWithName<Node> implements
     public Iterable<Product> getProducts()
     {
         Traverser traverser = getUnderlyingContainer().traverse(
-                Order.DEPTH_FIRST, StopEvaluator.END_OF_GRAPH,
+                Order.DEPTH_FIRST, StopEvaluator.DEPTH_ONE,
                 ReturnableEvaluator.ALL_BUT_START_NODE,
-                RelationshipTypes.SUBCATEGORY, Direction.OUTGOING,
                 RelationshipTypes.PRODUCT, Direction.OUTGOING );
         return new IterableWrapper<Product, Node>( traverser )
         {
             @Override
-            protected Product underlyingObjectToObject( Node node )
+            protected Product underlyingObjectToObject( final Node node )
+            {
+                return new ProductImpl( node );
+            }
+        };
+    }
+
+    public Iterable<Product> getAllProducts()
+    {
+        Traverser traverser = getUnderlyingContainer().traverse(
+                Order.DEPTH_FIRST,
+                StopEvaluator.END_OF_GRAPH,
+                new ReturnableEvaluator()
+                {
+                    public boolean isReturnableNode(
+                            final TraversalPosition currentPos )
+                    {
+                        return !currentPos.isStartNode()
+                               && currentPos.lastRelationshipTraversed().isType(
+                                       RelationshipTypes.PRODUCT );
+                    }
+                }, RelationshipTypes.SUBCATEGORY, Direction.OUTGOING,
+                RelationshipTypes.PRODUCT, Direction.OUTGOING );
+        return new IterableWrapper<Product, Node>( traverser )
+        {
+            @Override
+            protected Product underlyingObjectToObject( final Node node )
             {
                 return new ProductImpl( node );
             }
@@ -90,7 +143,7 @@ public class CategoryImpl extends ContainerWrapperWithName<Node> implements
         return new IterableWrapper<Category, Node>( traverser )
         {
             @Override
-            protected Category underlyingObjectToObject( Node node )
+            protected Category underlyingObjectToObject( final Node node )
             {
                 return new CategoryImpl( node );
             }

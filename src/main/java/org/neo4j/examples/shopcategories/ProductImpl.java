@@ -1,78 +1,45 @@
 package org.neo4j.examples.shopcategories;
 
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import org.neo4j.commons.iterator.FilteringIterable;
-import org.neo4j.commons.iterator.IterableWrapper;
-import org.neo4j.commons.iterator.NestingIterable;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.ReturnableEvaluator;
-import org.neo4j.graphdb.StopEvaluator;
-import org.neo4j.graphdb.TraversalPosition;
-import org.neo4j.graphdb.Traverser;
-import org.neo4j.graphdb.Traverser.Order;
 
 public class ProductImpl extends ContainerWrapper<Node> implements Product
 {
-    public ProductImpl( Node node )
+    public ProductImpl( final Node node )
     {
         super( node );
     }
 
-    public Iterable<AttributeValue> getAttributeValues()
+    public void setAttribute( final AttributeDefinition attributeDefinition,
+            final Object value )
     {
-        Traverser traverser = getUnderlyingContainer().traverse(
-                Order.DEPTH_FIRST, StopEvaluator.END_OF_GRAPH,
-                new ReturnableEvaluator()
-                {
-                    public boolean isReturnableNode( TraversalPosition pos )
-                    {
-                        return pos.lastRelationshipTraversed().isType(
-                                RelationshipTypes.ATTRIBUTE );
-                    }
-                }, RelationshipTypes.SUBCATEGORY, Direction.INCOMING );
-        NestingIterable<Relationship, Node> categories = new NestingIterable<Relationship, Node>(
-                traverser )
+        getUnderlyingContainer().setProperty( attributeDefinition.getName(),
+                value );
+    }
+
+    public Map<AttributeDefinition, Object> getAttributeValues()
+    {
+        Iterable<AttributeDefinition> defs = this.getCategory().getAllAttributeDefinitions();
+        Map<AttributeDefinition, Object> values = new HashMap<AttributeDefinition, Object>();
+        for ( AttributeDefinition def : defs )
         {
-            @Override
-            protected Iterator<Relationship> createNestedIterator( Node node )
+            Object value = getUnderlyingContainer().getProperty( def.getName(),
+                    null );
+            if ( value == null )
             {
-                return node.getRelationships( RelationshipTypes.ATTRIBUTE,
-                        Direction.OUTGOING ).iterator();
+                value = def.getDefaultValue();
             }
-        };
-        IterableWrapper<AttributeValue, Relationship> values = new IterableWrapper<AttributeValue, Relationship>(
-                categories )
-        {
-            @Override
-            protected AttributeValue underlyingObjectToObject(
-                    Relationship attribute )
+            if ( value != null )
             {
-                AttributeDefinition def = new AttributeDefinitionImpl(
-                        attribute );
-                String key = def.getName();
-                Object value = getUnderlyingContainer().getProperty( key, null );
-                if ( value == null )
-                {
-                    value = def.getDefaultValue();
-                }
-                if ( value != null )
-                {
-                    return new AttributeValueImpl( def, value );
-                }
-                return null;
+                values.put( def, value );
             }
-        };
-        return new FilteringIterable<AttributeValue>( values )
-        {
-            @Override
-            protected boolean passes( AttributeValue attrVal )
-            {
-                return attrVal != null;
-            }
-        };
+        }
+        return values;
     }
 
     public Category getCategory()
@@ -80,5 +47,18 @@ public class ProductImpl extends ContainerWrapper<Node> implements Product
         Relationship categoryRel = getUnderlyingContainer().getSingleRelationship(
                 RelationshipTypes.PRODUCT, Direction.INCOMING );
         return new CategoryImpl( categoryRel.getStartNode() );
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder str = new StringBuilder( "Product:\n" );
+        for ( Entry<AttributeDefinition, Object> entry : getAttributeValues().entrySet() )
+        {
+            str.append( " " ).append( entry.getKey().getName() ).append( " (" ).append(
+                    entry.getKey().getTypeName() ).append( ") -> " ).append(
+                    entry.getValue() ).append( '\n' );
+        }
+        return str.toString();
     }
 }
