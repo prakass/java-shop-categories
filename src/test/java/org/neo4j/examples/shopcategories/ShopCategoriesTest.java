@@ -17,7 +17,7 @@ import org.neo4j.graphdb.StopEvaluator;
 import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.Traverser.Order;
 
-public class ShopCategoriesAppTest
+public class ShopCategoriesTest
 {
     private static ShopCategoriesService service;
 
@@ -38,7 +38,8 @@ public class ShopCategoriesAppTest
     {
         service.beginTx();
 
-        Category electronics = service.createCategory( "Electronics", null );
+        Category electronics = service.createCategory( "Electronics",
+                service.getRootCategory() );
         Category cameras = service.createCategory( "Cameras", electronics );
         Category computers = service.createCategory( "Computers", electronics );
 
@@ -134,7 +135,8 @@ public class ShopCategoriesAppTest
     @Test( expected = IllegalArgumentException.class )
     public void productWithMissingRequiredAttributes()
     {
-        service.createProduct( service.getRootCategory(),
+        service.createProduct(
+                service.getRootCategory().getSubcategories().iterator().next(),
                 new HashMap<AttributeDefinition, Object>() );
     }
 

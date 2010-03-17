@@ -3,21 +3,23 @@ package org.neo4j.examples.shopcategories;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.util.GraphDatabaseUtil;
 
 public class ShopCategoriesServiceImpl implements ShopCategoriesService
 {
     private final GraphDatabaseService graphDb;
     private Transaction tx;
+    private final GraphDatabaseUtil util;
 
     public ShopCategoriesServiceImpl()
     {
         graphDb = new EmbeddedGraphDatabase( "target/neo4j-db" );
+        util = new GraphDatabaseUtil( graphDb );
         Runtime.getRuntime().addShutdownHook( new Thread()
         {
             @Override
@@ -41,7 +43,6 @@ public class ShopCategoriesServiceImpl implements ShopCategoriesService
 
     public void rollbackTx()
     {
-        tx.failure();
         tx.finish();
     }
 
@@ -49,33 +50,13 @@ public class ShopCategoriesServiceImpl implements ShopCategoriesService
     {
         Node categoryNode = graphDb.createNode();
         Category category = new CategoryImpl( categoryNode, name );
-        if ( parent == null )
-        {
-            Relationship categoryRel = graphDb.getReferenceNode().getSingleRelationship(
-                    RelationshipTypes.ROOTCATEGORY, Direction.OUTGOING );
-            if ( categoryRel != null )
-            {
-                categoryRel.delete();
-            }
-            graphDb.getReferenceNode().createRelationshipTo( categoryNode,
-                    RelationshipTypes.ROOTCATEGORY );
-        }
-        else
-        {
-            parent.addSubcategory( category );
-        }
+        parent.addSubcategory( category );
         return category;
     }
 
     public Category getRootCategory()
     {
-        Relationship categoryRel = graphDb.getReferenceNode().getSingleRelationship(
-                RelationshipTypes.ROOTCATEGORY, Direction.OUTGOING );
-        if ( categoryRel == null )
-        {
-            throw new IllegalStateException( "No root category defined." );
-        }
-        Node categoryNode = categoryRel.getEndNode();
+        Node categoryNode = util.getOrCreateSubReferenceNode( DynamicRelationshipType.withName( "ROOTCATEGORY" ) );
         Category category = new CategoryImpl( categoryNode );
         return category;
     }
