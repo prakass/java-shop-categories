@@ -58,6 +58,7 @@ public class ShopCategoriesServiceImpl implements ShopCategoriesService
     {
         Node categoryNode = util.getOrCreateSubReferenceNode( DynamicRelationshipType.withName( "ROOTCATEGORY" ) );
         Category category = new CategoryImpl( categoryNode );
+        category.setName( "Products" );
         return category;
     }
 
