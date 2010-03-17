@@ -55,9 +55,9 @@ public class ProductImpl extends ContainerWrapper<Node> implements Product
         StringBuilder str = new StringBuilder( "Product:\n" );
         for ( Entry<AttributeDefinition, Object> entry : getAttributeValues().entrySet() )
         {
-            str.append( " " ).append( entry.getKey().getName() ).append( " (" ).append(
-                    entry.getKey().getTypeName() ).append( ") -> " ).append(
-                    entry.getValue() ).append( '\n' );
+            str.append( " " ).append( entry.getKey().getName() ).append( " -> " ).append(
+                    entry.getValue() ).append( " " ).append(
+                    entry.getKey().getUnit() ).append( '\n' );
         }
         return str.toString();
     }

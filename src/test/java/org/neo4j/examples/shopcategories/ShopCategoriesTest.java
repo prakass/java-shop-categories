@@ -31,7 +31,7 @@ public class ShopCategoriesTest
     @AfterClass
     public static void teardown()
     {
-        cleanDb();
+        // cleanDb();
     }
 
     private static void setupDb()
@@ -46,29 +46,34 @@ public class ShopCategoriesTest
         Category desktops = service.createCategory( "Desktops", computers );
         Category laptops = service.createCategory( "Laptops", computers );
 
-        AttributeType weight = service.createAttributeType( "weight" );
-        AttributeType count = service.createAttributeType( "count" );
-        AttributeType length = service.createAttributeType( "length" );
-        AttributeType frequency = service.createAttributeType( "frequency" );
-        AttributeType name = service.createAttributeType( "name" );
+        AttributeType weight = service.createAttributeType( "Weight", "Kg" );
+        AttributeType count = service.createAttributeType( "Count", "pcs." );
+        AttributeType length = service.createAttributeType( "Length", "\"" );
+        AttributeType frequency = service.createAttributeType( "Frequency",
+                "MHz" );
+        AttributeType name = service.createAttributeType( "Name", "" );
+        AttributeType currency = service.createAttributeType( "Currency", "USD" );
 
         final AttributeDefinition aName = electronics.createAttributeDefinition(
-                name, "name" );
+                name, "Name" );
         aName.setRequired( true );
+        final AttributeDefinition aPrice = electronics.createAttributeDefinition(
+                currency, "Price" );
+        aPrice.setRequired( true );
         final AttributeDefinition aWeight = electronics.createAttributeDefinition(
-                weight, "weight" );
+                weight, "Weight" );
         aWeight.setRequired( true );
-        final AttributeDefinition aShippingWeight = electronics.createAttributeDefinition(
-                weight, "shipping weight" );
+        final AttributeDefinition aShippingWeight = computers.createAttributeDefinition(
+                weight, "Shipping weight" );
         aShippingWeight.setRequired( true );
         final AttributeDefinition aCpuFreq = computers.createAttributeDefinition(
-                frequency, "cpu frequency" );
+                frequency, "CPU frequency" );
         aCpuFreq.setRequired( true );
         AttributeDefinition aExpansionSlots = desktops.createAttributeDefinition(
-                count, "expansion slots" );
+                count, "Expansion slots" );
         aExpansionSlots.setDefaultValue( 4 );
         AttributeDefinition aDisplaySize = laptops.createAttributeDefinition(
-                length, "display size" );
+                length, "Display size" );
         aDisplaySize.setDefaultValue( 15.0 );
 
         service.createProduct( desktops,
@@ -79,6 +84,7 @@ public class ShopCategoriesTest
                         put( aWeight, 17.1 );
                         put( aShippingWeight, 22.3 );
                         put( aCpuFreq, 3000 );
+                        put( aPrice, 890.0 );
                     }
                 } );
         service.createProduct( laptops,
@@ -89,6 +95,7 @@ public class ShopCategoriesTest
                         put( aWeight, 3.5 );
                         put( aShippingWeight, 6.3 );
                         put( aCpuFreq, 2000 );
+                        put( aPrice, 1200.0 );
                     }
                 } );
         service.commitTx();

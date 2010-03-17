@@ -11,11 +11,11 @@ public interface ShopCategoriesService
 
     void rollbackTx();
 
-    Category createCategory( final String name, final Category parent );
+    Category createCategory( String name, Category parent );
 
     Category getRootCategory();
 
-    AttributeType createAttributeType( final String name );
+    AttributeType createAttributeType( String name, String unitName );
 
     Product createProduct( final Category category,
             final Map<AttributeDefinition, Object> values );

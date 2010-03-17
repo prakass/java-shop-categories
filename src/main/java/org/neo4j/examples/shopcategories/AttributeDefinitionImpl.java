@@ -24,11 +24,11 @@ public class AttributeDefinitionImpl extends
         getUnderlyingContainer().setProperty( DEFAULT_VALUE, value );
     }
 
-    public String getTypeName()
+    public String getUnit()
     {
         Node node = getUnderlyingContainer().getEndNode();
         AttributeType type = new AttributeTypeImpl( node );
-        return type.getName();
+        return type.getUnit();
     }
 
     public boolean isRequired()
@@ -46,6 +46,6 @@ public class AttributeDefinitionImpl extends
     public String toString()
     {
         return "attribute[" + getName() + "](" + ( !isRequired() ? "not " : "" )
-               + "required, " + getTypeName() + ")";
+               + "required, " + getUnit() + ")";
     }
 }

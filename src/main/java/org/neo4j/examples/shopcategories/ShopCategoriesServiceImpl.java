@@ -62,9 +62,10 @@ public class ShopCategoriesServiceImpl implements ShopCategoriesService
         return category;
     }
 
-    public AttributeType createAttributeType( final String name )
+    public AttributeType createAttributeType( final String name,
+            final String unitName )
     {
-        return new AttributeTypeImpl( graphDb.createNode(), name );
+        return new AttributeTypeImpl( graphDb.createNode(), name, unitName );
     }
 
     public Product createProduct( final Category category,

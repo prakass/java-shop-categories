@@ -14,5 +14,5 @@ public interface AttributeDefinition
 
     void setDefaultValue( Object value );
 
-    String getTypeName();
+    String getUnit();
 }
