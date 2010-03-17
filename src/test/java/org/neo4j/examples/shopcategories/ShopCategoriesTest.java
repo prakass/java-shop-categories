@@ -31,7 +31,7 @@ public class ShopCategoriesTest
     @AfterClass
     public static void teardown()
     {
-        // cleanDb();
+        cleanDb();
     }
 
     private static void setupDb()
