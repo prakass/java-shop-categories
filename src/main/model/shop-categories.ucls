@@ -3,7 +3,7 @@
   <interface corner="BOTTOM_RIGHT" language="java" name="org.neo4j.examples.shopcategories.AttributeType" 
     project="shop-categories" file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/AttributeType.java" 
     binary="false">    
-    <position x="74" y="355" width="-1" height="-1"/>    
+    <position x="167" y="447" width="-1" height="-1"/>    
     <display autosize="true" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -21,7 +21,7 @@
   <interface corner="BOTTOM_RIGHT" language="java" name="org.neo4j.examples.shopcategories.AttributeDefinition" 
     project="shop-categories" 
     file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/AttributeDefinition.java" binary="false">    
-    <position x="402" y="404" width="-1" height="-1"/>    
+    <position x="501" y="354" width="-1" height="-1"/>    
     <display autosize="true" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -30,7 +30,7 @@
   <interface corner="BOTTOM_RIGHT" language="java" name="org.neo4j.examples.shopcategories.Product" 
     project="shop-categories" file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/Product.java" 
     binary="false">    
-    <position x="315" y="45" width="-1" height="-1"/>    
+    <position x="344" y="67" width="-1" height="-1"/>    
     <display autosize="true" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
@@ -39,32 +39,17 @@
   <interface corner="BOTTOM_RIGHT" language="java" name="org.neo4j.examples.shopcategories.Category" 
     project="shop-categories" file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/Category.java" 
     binary="false">    
-    <position x="176" y="200" width="-1" height="-1"/>    
+    <position x="199" y="259" width="-1" height="-1"/>    
     <display autosize="true" package="false" initial-value="false" signature="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </interface>  
-  <interface corner="BOTTOM_RIGHT" language="java" name="org.neo4j.examples.shopcategories.AttributeValue" 
-    project="shop-categories" 
-    file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/AttributeValue.java" binary="false">    
-    <position x="469" y="152" width="-1" height="-1"/>    
-    <display autosize="true" package="false" initial-value="false" signature="true" visibility="true">      
-      <attributes public="false" package="false" protected="false" private="false"/>      
-      <operations public="true" package="true" protected="true" private="true"/>    
-    </display>  
-  </interface>  
-  <dependency>    
-    <source project="shop-categories" name="org.neo4j.examples.shopcategories.Category" 
-      file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/Category.java" binary="false"/>    
-    <target project="shop-categories" name="org.neo4j.examples.shopcategories.AttributeDefinition" 
-      file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/AttributeDefinition.java" binary="false"/>  
-  </dependency>  
   <dependency>    
     <source project="shop-categories" name="org.neo4j.examples.shopcategories.Product" 
       file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/Product.java" binary="false"/>    
-    <target project="shop-categories" name="org.neo4j.examples.shopcategories.AttributeValue" 
-      file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/AttributeValue.java" binary="false"/>  
+    <target project="shop-categories" name="org.neo4j.examples.shopcategories.Category" 
+      file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/Category.java" binary="false"/>  
   </dependency>  
   <dependency>    
     <source project="shop-categories" name="org.neo4j.examples.shopcategories.Category" 
@@ -79,16 +64,16 @@
       file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/AttributeType.java" binary="false"/>  
   </dependency>  
   <dependency>    
-    <source project="shop-categories" name="org.neo4j.examples.shopcategories.AttributeValue" 
-      file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/AttributeValue.java" binary="false"/>    
+    <source project="shop-categories" name="org.neo4j.examples.shopcategories.Product" 
+      file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/Product.java" binary="false"/>    
     <target project="shop-categories" name="org.neo4j.examples.shopcategories.AttributeDefinition" 
       file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/AttributeDefinition.java" binary="false"/>  
   </dependency>  
   <dependency>    
-    <source project="shop-categories" name="org.neo4j.examples.shopcategories.Product" 
-      file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/Product.java" binary="false"/>    
-    <target project="shop-categories" name="org.neo4j.examples.shopcategories.Category" 
-      file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/Category.java" binary="false"/>  
+    <source project="shop-categories" name="org.neo4j.examples.shopcategories.Category" 
+      file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/Category.java" binary="false"/>    
+    <target project="shop-categories" name="org.neo4j.examples.shopcategories.AttributeDefinition" 
+      file="/shop-categories/src/main/java/org/neo4j/examples/shopcategories/AttributeDefinition.java" binary="false"/>  
   </dependency>  
   <classifier-display autosize="true" package="false" initial-value="false" signature="true" visibility="true">    
     <attributes public="false" package="false" protected="false" private="false"/>    

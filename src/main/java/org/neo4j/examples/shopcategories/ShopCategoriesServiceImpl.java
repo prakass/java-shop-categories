@@ -3,15 +3,22 @@ package org.neo4j.examples.shopcategories;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.util.GraphDatabaseUtil;
 
 public class ShopCategoriesServiceImpl implements ShopCategoriesService
 {
+    private enum RootRelationshipTypes implements RelationshipType
+    {
+        CATEGORY_ROOT,
+        ATTRIBUTE_ROOT,
+        ATTRIBUTE_TYPE
+    }
+
     private final GraphDatabaseService graphDb;
     private Transaction tx;
     private final GraphDatabaseUtil util;
@@ -56,7 +63,7 @@ public class ShopCategoriesServiceImpl implements ShopCategoriesService
 
     public Category getRootCategory()
     {
-        Node categoryNode = util.getOrCreateSubReferenceNode( DynamicRelationshipType.withName( "ROOTCATEGORY" ) );
+        Node categoryNode = util.getOrCreateSubReferenceNode( RootRelationshipTypes.CATEGORY_ROOT );
         Category category = new CategoryImpl( categoryNode );
         category.setName( "Products" );
         return category;
@@ -65,7 +72,11 @@ public class ShopCategoriesServiceImpl implements ShopCategoriesService
     public AttributeType createAttributeType( final String name,
             final String unitName )
     {
-        return new AttributeTypeImpl( graphDb.createNode(), name, unitName );
+        Node typeRootNode = util.getOrCreateSubReferenceNode( RootRelationshipTypes.ATTRIBUTE_ROOT );
+        Node typeNode = graphDb.createNode();
+        typeRootNode.createRelationshipTo( typeNode,
+                RootRelationshipTypes.ATTRIBUTE_TYPE );
+        return new AttributeTypeImpl( typeNode, name, unitName );
     }
 
     public Product createProduct( final Category category,
