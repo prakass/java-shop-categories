@@ -1,14 +1,7 @@
 package org.neo4j.examples.shopcategories;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.HashMap;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -17,21 +10,27 @@ import org.neo4j.graphdb.StopEvaluator;
 import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.Traverser.Order;
 
-public class ShopCategoriesTest
+public class ShopCategoriesApp
 {
     private static ShopCategoriesService service;
 
-    @BeforeClass
+    public static void main( String[] args )
+    {
+        setup();
+
+        teardown();
+    }
+
     public static void setup()
     {
         service = new ShopCategoriesServiceImpl();
         setupDb();
     }
 
-    @AfterClass
     public static void teardown()
     {
         cleanDb();
+        service.shutdown();
     }
 
     private static void setupDb()
@@ -100,11 +99,11 @@ public class ShopCategoriesTest
                 } );
         service.commitTx();
         service.beginTx();
+        System.out.println( "All computers:\n" );
         for ( Product product : computers.getAllProducts() )
         {
             System.out.println( product );
         }
-
         service.commitTx();
     }
 
@@ -125,39 +124,5 @@ public class ShopCategoriesTest
             node.delete();
         }
         service.commitTx();
-    }
-
-    @Before
-    public void start()
-    {
-        service.beginTx();
-    }
-
-    @After
-    public void end()
-    {
-        service.rollbackTx();
-    }
-
-    @Test( expected = IllegalArgumentException.class )
-    public void productWithMissingRequiredAttributes()
-    {
-        service.createProduct(
-                service.getRootCategory().getSubcategories().iterator().next(),
-                new HashMap<AttributeDefinition, Object>() );
-    }
-
-    @Test
-    public void testNumberOfProducts()
-    {
-        int count = 0;
-        for ( Product product : service.getRootCategory().getAllProducts() )
-        {
-            if ( product != null )
-            {
-                count++;
-            }
-        }
-        assertEquals( 2, count );
     }
 }

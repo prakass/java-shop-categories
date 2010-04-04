@@ -8,6 +8,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
+import org.neo4j.util.GraphDatabaseLifecycle;
 import org.neo4j.util.GraphDatabaseUtil;
 
 public class ShopCategoriesServiceImpl implements ShopCategoriesService
@@ -22,19 +23,18 @@ public class ShopCategoriesServiceImpl implements ShopCategoriesService
     private final GraphDatabaseService graphDb;
     private Transaction tx;
     private final GraphDatabaseUtil util;
+    private final GraphDatabaseLifecycle lifecyle;
 
     public ShopCategoriesServiceImpl()
     {
         graphDb = new EmbeddedGraphDatabase( "target/neo4j-db" );
         util = new GraphDatabaseUtil( graphDb );
-        Runtime.getRuntime().addShutdownHook( new Thread()
-        {
-            @Override
-            public void run()
-            {
-                graphDb.shutdown();
-            }
-        } );
+        lifecyle = new GraphDatabaseLifecycle( graphDb );
+    }
+
+    public void shutdown()
+    {
+        lifecyle.manualShutdown();
     }
 
     public void beginTx()

@@ -4,6 +4,7 @@ import java.util.Map;
 
 public interface ShopCategoriesService
 {
+    void shutdown();
 
     void beginTx();
 
